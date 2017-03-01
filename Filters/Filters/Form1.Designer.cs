@@ -80,19 +80,20 @@
             this.точечныеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.инверсияToolStripMenuItem});
             this.точечныеToolStripMenuItem.Name = "точечныеToolStripMenuItem";
-            this.точечныеToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.точечныеToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.точечныеToolStripMenuItem.Text = "Точечные";
             // 
             // инверсияToolStripMenuItem
             // 
             this.инверсияToolStripMenuItem.Name = "инверсияToolStripMenuItem";
-            this.инверсияToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.инверсияToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.инверсияToolStripMenuItem.Text = "Инверсия";
+            this.инверсияToolStripMenuItem.Click += new System.EventHandler(this.инверсияToolStripMenuItem_Click);
             // 
             // матричныеToolStripMenuItem
             // 
             this.матричныеToolStripMenuItem.Name = "матричныеToolStripMenuItem";
-            this.матричныеToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.матричныеToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.матричныеToolStripMenuItem.Text = "Матричные";
             // 
             // pictureBox1
