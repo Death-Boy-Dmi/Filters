@@ -43,6 +43,16 @@ namespace Filters
         }
     }
 
+    class IncBright : Filters
+    {
+        protected override Color calculateNewPixelColor(Bitmap sourceImage, int x, int y)
+        {
+            Color sourceColor = sourceImage.GetPixel(x, y);
+            Color resultColor = Color.FromArgb(7 + sourceColor.R, 7 + sourceColor.G, 7 + sourceColor.B);
+            return resultColor;
+        }
+    }
+
     class MatrixFilter : Filters
     {
         protected float[,] kernel = null;
@@ -90,5 +100,55 @@ namespace Filters
             }
         }
 
+    }
+
+    class GaussianFilter : MatrixFilter
+    {
+        public void createGaussianKernel (int rad, float sigma)
+        {
+            // определяем размер ядра
+            int size = 2 * rad + 1;
+            // создаем ядро фильтра
+            kernel = new float[size, size];
+            // коэффициент нормировки ядра
+            float norm = 0;
+            // рассчитываем ядро линейного фильтра
+            for (int i = -rad; i <= rad; i++)
+                for (int j = -rad; j <= rad; j++)
+                {
+                    kernel[i + rad, j + rad] = (float)(Math.Exp(-(i * i + j * j) / (sigma * sigma)));
+                    norm += kernel[i + rad, j + rad];
+                }
+            // нормируем ядро
+            for (int i = 0; i < size; i++)
+                for (int j = 0; j < size; j++)
+                    kernel[i, j] /= norm;
+        }
+
+        public GaussianFilter()
+        {
+            createGaussianKernel(3, 2);
+        }
+    }
+
+    class Sharpness : MatrixFilter
+    {
+        public Sharpness()
+        {
+            kernel = new float[3, 3];
+            kernel[0, 0] = kernel[0, 1] = kernel[0, 2] = kernel[1, 0] = kernel[1, 2] = kernel[2, 0] = kernel[2, 1] = kernel[2, 2] = -1;
+            kernel[1, 1] = 9;
+        }
+    }
+
+    class Stamping : MatrixFilter
+    {
+        public Stamping()
+        {
+            kernel = new float[3, 3];
+            kernel[0, 0] = kernel[2, 2] = kernel[1, 1] = kernel[2, 0] = kernel[2, 2] = 0;
+            kernel[0, 1] = kernel[1, 0] = 1;
+            kernel[1, 2] = kernel[2, 1] = -1;
+        }
     }
 }

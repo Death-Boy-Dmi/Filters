@@ -68,5 +68,30 @@ namespace Filters
             Filters filter = new BlurFilter();
             backgroundWorker1.RunWorkerAsync(filter);
         }
+
+        private void гауссаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new GaussianFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+
+        }
+
+        private void резкостьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Sharpness();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void тиснениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Stamping();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void повыситьЯркостьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new IncBright();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
     }
 }
