@@ -43,13 +43,135 @@ namespace Filters
         }
     }
 
-    class IncBright : Filters
+    class GrayScaleFilter : Filters
     {
-        protected override Color calculateNewPixelColor(Bitmap sourceImage, int x, int y)
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
         {
-            Color sourceColor = sourceImage.GetPixel(x, y);
-            Color resultColor = Color.FromArgb(7 + sourceColor.R, 7 + sourceColor.G, 7 + sourceColor.B);
-            return resultColor;
+            Color sourceColor = sourseImage.GetPixel(x, y);
+            double resultR = sourceColor.R * 0.36;
+            double resultG = sourceColor.G * 0.53;
+            double resultB = sourceColor.B * 0.11;
+            double intensity = resultR + resultG + resultB;
+
+            return Color.FromArgb(Clamp((int)intensity, 0, 255),
+                                  Clamp((int)intensity, 0, 255),
+                                   Clamp((int)intensity, 0, 255));
+        }
+    }
+
+    class SepiaFilter : Filters
+    {
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            Color sourceColor = sourseImage.GetPixel(x, y);
+            double resultR = sourceColor.R * 0.36;
+            double resultG = sourceColor.G * 0.53;
+            double resultB = sourceColor.B * 0.11;
+            double intensity = resultR + resultG + resultB;
+            int k = 100;
+
+            return Color.FromArgb(Clamp((int)(intensity + 2 * k), 0, 255),
+                                  Clamp((int)(intensity + 0.5 * k), 0, 255),
+                                  Clamp((int)(intensity - 1 * k), 0, 255));
+        }
+    }
+
+    class BrightnessFilterPlus : Filters
+    {
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            int k = 50;
+            Color sourceColor = sourseImage.GetPixel(x, y);
+            double resultR = sourceColor.R + k;
+            double resultG = sourceColor.G + k;
+            double resultB = sourceColor.B + k;
+
+            return Color.FromArgb(Clamp((int)resultR, 0, 255),
+                                 Clamp((int)resultG, 0, 255),
+                                 Clamp((int)resultB, 0, 255));
+        }
+    }
+
+    class BrightnessFilterMinus : Filters
+    {
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            int k = 50;
+            Color sourceColor = sourseImage.GetPixel(x, y);
+            double resultR = sourceColor.R - k;
+            double resultG = sourceColor.G - k;
+            double resultB = sourceColor.B - k;
+
+            return Color.FromArgb(Clamp((int)resultR, 0, 255),
+                                 Clamp((int)resultG, 0, 255),
+                                 Clamp((int)resultB, 0, 255));
+        }
+    }
+
+    class RemoveFilter : Filters
+    {
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            int k = 100;
+            double resultR;
+            double resultG;
+            double resultB;
+            if (x + k < sourseImage.Width)
+            {
+                Color sourceColor = sourseImage.GetPixel(x + k, y);
+
+                resultR = sourceColor.R;
+                resultG = sourceColor.G;
+                resultB = sourceColor.B;
+            }
+            else
+            {
+                resultR = 0;
+                resultG = 0;
+                resultB = 0;
+
+            }
+            return Color.FromArgb(Clamp((int)resultR, 0, 255),
+                                  Clamp((int)resultG, 0, 255),
+                                   Clamp((int)resultB, 0, 255));
+        }
+    }
+
+    class SpinFilter : Filters
+    {
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+
+            int x0 = sourseImage.Width / 2,
+                y0 = sourseImage.Height / 2;
+            double spin = Math.PI / 6;
+
+            double resultR;
+            double resultG;
+            double resultB;
+
+            int newX = (int)((x - x0) * Math.Cos(spin) - (y - y0) * Math.Sin(spin) + x0);
+            int newY = (int)((x - x0) * Math.Sin(spin) + (y - y0) * Math.Cos(spin) + y0);
+
+            if (newX < 0 || newX >= sourseImage.Width || newY < 0 || newY >= sourseImage.Height)
+            {
+                resultR = 0;
+                resultG = 0;
+                resultB = 0;
+            }
+            else
+            {
+                Color sourceColor = sourseImage.GetPixel(newX, newY);
+
+
+                resultR = sourceColor.R;
+                resultG = sourceColor.G;
+                resultB = sourceColor.B;
+            }
+
+            return Color.FromArgb(Clamp((int)resultR, 0, 255),
+                         Clamp((int)resultG, 0, 255),
+                          Clamp((int)resultB, 0, 255));
         }
     }
 
@@ -145,10 +267,43 @@ namespace Filters
     {
         public Stamping()
         {
-            kernel = new float[3, 3];
-            kernel[0, 0] = kernel[2, 2] = kernel[1, 1] = kernel[2, 0] = kernel[2, 2] = 0;
-            kernel[0, 1] = kernel[1, 0] = 1;
-            kernel[1, 2] = kernel[2, 1] = -1;
+            kernel = new float[3, 3] { { 0, 1, 0 }, { 1, 0, -1 }, { 0, -1, 0 } };
+
+
+            float norm = 2;
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    kernel[i, j] /= norm;
+
+
+        }
+
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            int coef = 50;
+
+            int radiusX = kernel.GetLength(0) / 2;
+            int radiusY = kernel.GetLength(1) / 2;
+            float resultR = 0;
+            float resultG = 0;
+            float resultB = 0;
+            for (int l = -radiusY; l <= radiusY; l++)
+            {
+                for (int k = -radiusX; k <= radiusX; k++)
+                {
+                    int idx = Clamp(x + k, 0, sourseImage.Width - 1);
+                    int idy = Clamp(y + l, 0, sourseImage.Height - 1);
+                    Color neighborColor = sourseImage.GetPixel(idx, idy);
+                    resultR += neighborColor.R * kernel[k + radiusX, l + radiusY];
+                    resultG += neighborColor.G * kernel[k + radiusX, l + radiusY];
+                    resultB += neighborColor.B * kernel[k + radiusX, l + radiusY];
+                }
+            }
+            return Color.FromArgb(
+                Clamp((int)(resultR + coef), 0, 255),
+                Clamp((int)(resultG + coef), 0, 255),
+                Clamp((int)(resultB + coef), 0, 255)
+            );
         }
     }
 }

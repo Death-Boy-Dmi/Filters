@@ -13,6 +13,7 @@ namespace Filters
     public partial class Form1 : Form
     {
         Bitmap image;
+        Bitmap startImage;
         public Form1()
         {
             InitializeComponent();
@@ -25,6 +26,7 @@ namespace Filters
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 image = new Bitmap(dialog.FileName);
+                startImage = image;
                 pictureBox1.Image = image;
                 pictureBox1.Refresh();
             }
@@ -88,9 +90,45 @@ namespace Filters
             backgroundWorker1.RunWorkerAsync(filter);
         }
 
-        private void повыситьЯркостьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Назад_Click(object sender, EventArgs e)
         {
-            Filters filter = new IncBright();
+            pictureBox1.Image = startImage;
+            pictureBox1.Refresh();
+        }
+
+        private void поворотToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new SpinFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void сдвигToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new RemoveFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void чБToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new GrayScaleFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void сепияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new SepiaFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void яркостьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new BrightnessFilterPlus();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            Filters filter = new BrightnessFilterMinus();
             backgroundWorker1.RunWorkerAsync(filter);
         }
     }
