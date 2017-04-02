@@ -166,5 +166,11 @@ namespace Filters
             pictureBox1.Image = MathMorfology.Gradient(image, matr);
             pictureBox1.Refresh();
         }
+
+        private void медианToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new MedianFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
     }
 }

@@ -263,6 +263,48 @@ namespace Filters
         }
     }
 
+    class MedianFilter : MatrixFilter
+    {
+        public MedianFilter(int n = 3)
+        {
+            kernel = new float[n, n];
+        }
+
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            int[] colR = new int[kernel.GetLength(0) * kernel.GetLength(1)];
+            int[] colG = new int[kernel.GetLength(0) * kernel.GetLength(1)];
+            int[] colB = new int[kernel.GetLength(0) * kernel.GetLength(1)];
+
+
+            for (int i = -kernel.GetLength(0) / 2; i <= kernel.GetLength(0) / 2; i++)
+                for (int j = -kernel.GetLength(1) / 2; j <= kernel.GetLength(1) / 2; j++)
+                {
+                    int idX = Clamp(x + i, 0, sourseImage.Width - 1);
+                    int idY = Clamp(y + j, 0, sourseImage.Height - 1);
+                    Color sourseColor = sourseImage.GetPixel(idX, idY);
+
+                    colR[i + kernel.GetLength(0) / 2 + j + kernel.GetLength(1) / 2] = sourseColor.R;
+                    colG[i + kernel.GetLength(0) / 2 + j + kernel.GetLength(1) / 2] = sourseColor.G;
+                    colB[i + kernel.GetLength(0) / 2 + j + kernel.GetLength(1) / 2] = sourseColor.B;
+                }
+            Array.Sort(colR);
+            Array.Sort(colG);
+            Array.Sort(colB);
+
+            int medR = colR[colR.GetLength(0) / 2];
+            int medG = colG[colG.GetLength(0) / 2];
+            int medB = colB[colB.GetLength(0) / 2];
+
+            return Color.FromArgb(
+                                   Clamp(medR, 0, 255),
+                                   Clamp(medG, 0, 255),
+                                   Clamp(medB, 0, 255)
+                                                       );
+        }
+    }
+
+
     class Stamping : MatrixFilter
     {
         public Stamping()

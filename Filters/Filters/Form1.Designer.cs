@@ -56,6 +56,7 @@
             this.открытиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.закрытиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gradToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.медианToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -165,7 +166,8 @@
             this.размытиеToolStripMenuItem,
             this.гауссаToolStripMenuItem,
             this.резкостьToolStripMenuItem,
-            this.тиснениеToolStripMenuItem});
+            this.тиснениеToolStripMenuItem,
+            this.медианToolStripMenuItem});
             this.матричныеToolStripMenuItem.Name = "матричныеToolStripMenuItem";
             this.матричныеToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.матричныеToolStripMenuItem.Text = "Матричные";
@@ -289,6 +291,13 @@
             this.gradToolStripMenuItem.Text = "Grad";
             this.gradToolStripMenuItem.Click += new System.EventHandler(this.gradToolStripMenuItem_Click);
             // 
+            // медианToolStripMenuItem
+            // 
+            this.медианToolStripMenuItem.Name = "медианToolStripMenuItem";
+            this.медианToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.медианToolStripMenuItem.Text = "Медиан";
+            this.медианToolStripMenuItem.Click += new System.EventHandler(this.медианToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -340,6 +349,7 @@
         private System.Windows.Forms.ToolStripMenuItem открытиеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem закрытиеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gradToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem медианToolStripMenuItem;
     }
 }
 
