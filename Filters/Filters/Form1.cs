@@ -131,5 +131,40 @@ namespace Filters
             Filters filter = new BrightnessFilterMinus();
             backgroundWorker1.RunWorkerAsync(filter);
         }
+
+        private void расширениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool [,] matr = new bool[3,3]  { {false,true,false },{true,false,true }, {false,true,false } };
+            pictureBox1.Image = MathMorfology.Erosion(image, matr);
+            pictureBox1.Refresh();
+        }
+
+        private void сужениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            pictureBox1.Image = MathMorfology.Dilation(image, matr);
+            pictureBox1.Refresh();
+        }
+
+        private void открытиеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            pictureBox1.Image = MathMorfology.Dilation(MathMorfology.Erosion(image, matr), matr);
+            pictureBox1.Refresh();
+        }
+
+        private void закрытиеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            pictureBox1.Image = MathMorfology.Erosion(MathMorfology.Dilation(image, matr), matr);
+            pictureBox1.Refresh();
+        }
+
+        private void gradToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            pictureBox1.Image = MathMorfology.Gradient(image, matr);
+            pictureBox1.Refresh();
+        }
     }
 }
