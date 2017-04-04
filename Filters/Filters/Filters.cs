@@ -18,7 +18,7 @@ namespace Filters
             return value;
         }
         protected abstract Color calculateNewPixelColor(Bitmap sourceImage, int x, int y);
-        public Bitmap processImage(Bitmap sourceImage, BackgroundWorker worker)
+        virtual public Bitmap processImage(Bitmap sourceImage, BackgroundWorker worker)
         {
             Bitmap resultImage = new Bitmap(sourceImage.Width, sourceImage.Height);
             for (int i = 0; i < sourceImage.Width; i++)
@@ -175,6 +175,90 @@ namespace Filters
         }
     }
 
+    class MyColor : IComparable
+    {
+        public int R;
+        public int G;
+        public int B;
+        public double I;
+        public MyColor(int R, int G, int B)
+        {
+            this.R = R;
+            this.G = G;
+            this.B = B;
+            this.I = 0.36 * R + 0.53 * G + 0.11 * B;
+        }
+        public int CompareTo(object obj)
+        {
+            MyColor ob = (MyColor)obj;
+            if (I > ob.I)
+                return 1;
+            if (I == ob.I)
+                return 0;
+            return -1;
+        }
+    }
+
+
+    class MedianFilter : Filters
+    {
+        private Color medianColor;
+        private int size;
+
+        public MedianFilter(int size = 3)
+        {
+            this.size = size;
+        }
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            return medianColor;
+        }
+
+        override public Bitmap processImage(Bitmap sourseImage, BackgroundWorker worker)
+        {
+            Bitmap resultImage = new Bitmap(sourseImage.Width, sourseImage.Height);
+
+            var arrayColor = new List<MyColor>();
+            int R, G, B;
+            MyColor color;
+
+            for (int y = size / 2; y < sourseImage.Height - size / 2; y++)
+            {
+                worker.ReportProgress((int)((float)(y - size / 2) / resultImage.Width * 100));
+                if (worker.CancellationPending)
+                    return null;
+
+                for (int x = size / 2; x < sourseImage.Width - size / 2; x++)
+                {
+                    arrayColor.Clear();
+
+                    for (int j = -size / 2; j <= size / 2; j++)
+                    {
+                        for (int i = -size / 2; i <= size / 2; i++)
+                        {
+                            R = sourseImage.GetPixel(x + i, y + j).R;
+                            G = sourseImage.GetPixel(x + i, y + j).G;
+                            B = sourseImage.GetPixel(x + i, y + j).B;
+                            color = new MyColor(R, G, B);
+                            arrayColor.Add(color);
+                        }
+                    }
+
+                    arrayColor.Sort();
+
+                    R = arrayColor.ElementAt(size * size / 2).R;
+                    G = arrayColor.ElementAt(size * size / 2).G;
+                    B = arrayColor.ElementAt(size * size / 2).B;
+                    medianColor = Color.FromArgb(R, G, B);
+
+                    resultImage.SetPixel(x - size / 2, y - size / 2, calculateNewPixelColor(sourseImage, x - size / 2, y - size / 2));
+                }
+            }
+            return resultImage;
+
+        }
+    }
+
     class MatrixFilter : Filters
     {
         protected float[,] kernel = null;
@@ -262,48 +346,6 @@ namespace Filters
             kernel[1, 1] = 9;
         }
     }
-
-    class MedianFilter : MatrixFilter
-    {
-        public MedianFilter(int n = 3)
-        {
-            kernel = new float[n, n];
-        }
-
-        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
-        {
-            int[] colR = new int[kernel.GetLength(0) * kernel.GetLength(1)];
-            int[] colG = new int[kernel.GetLength(0) * kernel.GetLength(1)];
-            int[] colB = new int[kernel.GetLength(0) * kernel.GetLength(1)];
-
-
-            for (int i = -kernel.GetLength(0) / 2; i <= kernel.GetLength(0) / 2; i++)
-                for (int j = -kernel.GetLength(1) / 2; j <= kernel.GetLength(1) / 2; j++)
-                {
-                    int idX = Clamp(x + i, 0, sourseImage.Width - 1);
-                    int idY = Clamp(y + j, 0, sourseImage.Height - 1);
-                    Color sourseColor = sourseImage.GetPixel(idX, idY);
-
-                    colR[i + kernel.GetLength(0) / 2 + j + kernel.GetLength(1) / 2] = sourseColor.R;
-                    colG[i + kernel.GetLength(0) / 2 + j + kernel.GetLength(1) / 2] = sourseColor.G;
-                    colB[i + kernel.GetLength(0) / 2 + j + kernel.GetLength(1) / 2] = sourseColor.B;
-                }
-            Array.Sort(colR);
-            Array.Sort(colG);
-            Array.Sort(colB);
-
-            int medR = colR[colR.GetLength(0) / 2];
-            int medG = colG[colG.GetLength(0) / 2];
-            int medB = colB[colB.GetLength(0) / 2];
-
-            return Color.FromArgb(
-                                   Clamp(medR, 0, 255),
-                                   Clamp(medG, 0, 255),
-                                   Clamp(medB, 0, 255)
-                                                       );
-        }
-    }
-
 
     class Stamping : MatrixFilter
     {

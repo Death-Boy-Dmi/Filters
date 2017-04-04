@@ -169,7 +169,12 @@ namespace Filters
 
         private void медианToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Filters filter = new MedianFilter();
+            
+        }
+
+        private void медианныйToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new MedianFilter(5);
             backgroundWorker1.RunWorkerAsync(filter);
         }
     }
