@@ -177,5 +177,11 @@ namespace Filters
             Filters filter = new MedianFilter(5);
             backgroundWorker1.RunWorkerAsync(filter);
         }
+
+        private void линейноеРастяжениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new LinearStrain();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
     }
 }
