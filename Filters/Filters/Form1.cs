@@ -10,11 +10,12 @@ using System.Windows.Forms;
 
 namespace Filters
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
+        StructElem structElem;
         Bitmap image;
         Bitmap startImage;
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -183,6 +184,13 @@ namespace Filters
         {
             Filters filter = new GrayWorldFilter(ref image);
             backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void задатьСтруктурныйЭлементToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            structElem = new StructElem();
+            structElem.Show();
+
         }
     }
 }
