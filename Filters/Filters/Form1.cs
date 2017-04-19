@@ -167,11 +167,6 @@ namespace Filters
             pictureBox1.Refresh();
         }
 
-        private void медианToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void медианныйToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Filters filter = new MedianFilter(5);
@@ -181,6 +176,12 @@ namespace Filters
         private void линейноеРастяжениеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Filters filter = new LinearStrain();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void серыйМирToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new GrayWorldFilter(ref image);
             backgroundWorker1.RunWorkerAsync(filter);
         }
     }
