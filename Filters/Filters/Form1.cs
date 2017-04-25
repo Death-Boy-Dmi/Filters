@@ -12,12 +12,16 @@ namespace Filters
 {
     public partial class MainForm : Form
     {
-        StructElem structElem;
+        TStructElem structElem;
         Bitmap image;
         Bitmap startImage;
+        bool[,] matr;
         public MainForm()
         {
             InitializeComponent();
+            panel1.Visible = false;
+            panel1.Enabled = false;
+            structElem = new TStructElem();
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -135,35 +139,35 @@ namespace Filters
 
         private void расширениеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool [,] matr = new bool[3,3]  { {false,true,false },{true,false,true }, {false,true,false } };
+            //matr = new bool[3,3]  { {false,true,false },{true,false,true }, {false,true,false } };
             pictureBox1.Image = MathMorfology.Erosion(image, matr);
             pictureBox1.Refresh();
         }
 
         private void сужениеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            //matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
             pictureBox1.Image = MathMorfology.Dilation(image, matr);
             pictureBox1.Refresh();
         }
 
         private void открытиеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            //matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
             pictureBox1.Image = MathMorfology.Dilation(MathMorfology.Erosion(image, matr), matr);
             pictureBox1.Refresh();
         }
 
         private void закрытиеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            //matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
             pictureBox1.Image = MathMorfology.Erosion(MathMorfology.Dilation(image, matr), matr);
             pictureBox1.Refresh();
         }
 
         private void gradToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool[,] matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
+            //matr = new bool[3, 3] { { false, true, false }, { true, false, true }, { false, true, false } };
             pictureBox1.Image = MathMorfology.Gradient(image, matr);
             pictureBox1.Refresh();
         }
@@ -188,9 +192,50 @@ namespace Filters
 
         private void задатьСтруктурныйЭлементToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            structElem = new StructElem();
-            structElem.Show();
+            panel1.Visible = true;
+            panel1.Enabled = true;
 
         }
+
+        private void yes_Click_1(object sender, EventArgs e)
+        {
+            structElem.sizeOfMatrix = int.Parse(sizeTXT.Text);
+            for (int i = 0; i < structElem.sizeOfMatrix; i++)
+            {
+                dataGridView1.Columns.Add("Column" + (1 + i).ToString(), (i + 1).ToString());
+                dataGridView1.Rows.Add();
+            }
+
+        }
+
+        private void cancel_Click_1(object sender, EventArgs e)
+        {
+            panel1.Visible = false;
+            panel1.Enabled = false;
+        }
+
+        private void ok_Click_1(object sender, EventArgs e)
+        {
+            structElem.matrix = new int[structElem.sizeOfMatrix, structElem.sizeOfMatrix];
+            for (int j = 0; j < structElem.sizeOfMatrix; j++)
+            {
+                for (int i = 0; i < structElem.sizeOfMatrix; i++)
+                    structElem.matrix[i, j] = Convert.ToInt32(dataGridView1.Rows[i].Cells[j].Value);
+            }
+            matr = new bool[structElem.sizeOfMatrix, structElem.sizeOfMatrix];
+            for (int j = 0; j < structElem.sizeOfMatrix; j++)
+            {
+                for (int i = 0; i < structElem.sizeOfMatrix; i++)
+                    matr[i, j] = Convert.ToBoolean(structElem.matrix[i, j]);
+            }
+            panel1.Visible = false;
+            panel1.Enabled = false;
+        }
     }
+    public class TStructElem
+    {
+        public int sizeOfMatrix;
+        public int[,] matrix;
+    }
+
 }
