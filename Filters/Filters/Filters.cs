@@ -18,6 +18,7 @@ namespace Filters
             return value;
         }
         protected abstract Color calculateNewPixelColor(Bitmap sourceImage, int x, int y);
+        //protected abstract Color calculateNewPixelColor(Bitmap sourceImage, Bitmap _secondImage, int x, int y);
         virtual public Bitmap processImage(Bitmap sourceImage, BackgroundWorker worker)
         {
             Bitmap resultImage = new Bitmap(sourceImage.Width, sourceImage.Height);
@@ -438,7 +439,6 @@ namespace Filters
             kernel[1, 1] = 9;
         }
     }
-
     class Stamping : MatrixFilter
     {
         public Stamping()

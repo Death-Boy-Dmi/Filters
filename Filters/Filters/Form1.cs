@@ -14,6 +14,7 @@ namespace Filters
     {
         TStructElem structElem;
         Bitmap image;
+        Bitmap secondImage;
         Bitmap startImage;
         bool[,] matr;
         public MainForm()
@@ -231,11 +232,46 @@ namespace Filters
             panel1.Visible = false;
             panel1.Enabled = false;
         }
+
+        private void вычитаниеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Image files | *.jpg; *.bmp; *.png; | All Files (*.*) | *.*";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                secondImage = new Bitmap(dialog.FileName);
+            }
+            Bitmap sourceImage = startImage;
+            Bitmap resultImage = new Bitmap(sourceImage.Width, sourceImage.Height);
+            for (int i = 0; i < sourceImage.Width; i++)
+            {
+                for (int j = 0; j < sourceImage.Height; j++)
+                    resultImage.SetPixel(i, j, Subtruction.calculateNewPixelColor(sourceImage, secondImage, i, j));
+            }
+            pictureBox1.Image = resultImage;
+            pictureBox1.Refresh();
+        }
     }
     public class TStructElem
     {
         public int sizeOfMatrix;
         public int[,] matrix;
     }
+    static public class Subtruction
+    {
+        static public Color calculateNewPixelColor(Bitmap _sourceImage, Bitmap _secondImage, int x, int y)
+        {
+            Color sourceColor = _sourceImage.GetPixel(x, y);
+            Color secondColor = _secondImage.GetPixel(x, y);
+            int subR = sourceColor.R - secondColor.R;
+            int subG = sourceColor.G - secondColor.G;
+            int subB = sourceColor.B - secondColor.B;
 
+            Color resultColor = Color.FromArgb(
+                Math.Abs(sourceColor.R - secondColor.R), 
+                Math.Abs(sourceColor.G - secondColor.G),
+                Math.Abs(sourceColor.B - secondColor.B));
+            return resultColor;
+        }
+    }
 }
